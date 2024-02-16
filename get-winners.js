@@ -1,75 +1,59 @@
-// Initialize an empty array to keep track of regular lottery winners
-const regularLotteryWinners = []
+const getWinners = require('./scripts/get-winners')
 
-function getJackpotLotteryWinner(randomWord) {
-  const winner = parseInt(randomWord) % (TICKET_COUNT * 100 / JACKPOT_CHANCE) + 1
+const JACKPOT_WIN_CHANCE = 1
 
-  // If the calculated winner number exceeds the TICKET_COUNT, return 'no winner' indicating no winner, otherwise return the winner number
-  return winner > TICKET_COUNT ? 'no winner' : winner
-}
+// list of participants in format "address ticket_count"
+// can be taken from rounds/{N}/participants.md file
+const PARTICIPANTS = [
+  /*
+  Sample for Round 2:
 
-function recreateRandomWord(randomWord) {
-  console.log('WORD WAS RECREATED!')
-
-  randomWord = randomWord.slice(1) + randomWord.charAt(0)
-
-  // Recursively call itself if the first character is '0' to ensure the resulting word doesn't start with '0'
-  if (randomWord.charAt(0) === '0') {
-    return recreateRandomWord(randomWord)
-  }
-
-  return randomWord
-}
-
-function getRegularLotteryWinner(randomWord) {
-  let winner = parseInt(randomWord) % TICKET_COUNT + 1
-
-  // If the calculated winner has already won, manipulate the random word and recalculate
-  if (regularLotteryWinners.includes(winner)) {
-    randomWord = recreateRandomWord(randomWord)
-    winner = getRegularLotteryWinner(randomWord)
-  }
-  else {
-    regularLotteryWinners.push(winner)
-  }
-
-  return winner
-}
-
-async function getWinners() {
-  // Return an array of winners by calculating regular and jackpot winners using the provided random words
-  return {
-    regular: [
-      getRegularLotteryWinner(VRF_V2_RANDOM_WORDS[0]),
-      getRegularLotteryWinner(VRF_V2_RANDOM_WORDS[1]),
-      getRegularLotteryWinner(VRF_V2_RANDOM_WORDS[2]),
-      getRegularLotteryWinner(VRF_V2_RANDOM_WORDS[3]),
-      getRegularLotteryWinner(VRF_V2_RANDOM_WORDS[4])
-    ].sort((a, b) => a - b),
-    jackpot: getJackpotLotteryWinner(VRF_V2_RANDOM_WORDS[5]),
-  }
-}
-
-/* *********************************************** */
-
-const TICKET_COUNT = 55
-const JACKPOT_CHANCE = 1 // 1%
-
-// Sample array of random words used for determining lottery winners
-const VRF_V2_RANDOM_WORDS = [
-  '56349687540706602234275904854527788749025086370315707978939164348580928652502',
-  '43270462519463765841868920552994843177368265002418015802309341390592245252470',
-  '53857022786106096634940287759700761254868386890629383751327659383410717965556',
-  '3926958926697983850877671245568307671681691565110505156134955204281375786976',
-  '78161677672696030082084694841675884267560559752625629453581539027796816634003',
-  '34540108220729456161181623813487922667149789418522953442082516959463719850557'
+  '0x375153c297b6ce68e3d786d39f8116383ad7da1a 291',
+  '0xf05ad6fa4eeb4ea4b4bf950ec774862a9a201f4d 106',
+  '0x31c4cd7f037e298b77ca93626b08237127f0ebf6 93',
+  '0xa28707248ceb6270adf5f9160efa8c841541ef1e 77',
+  '0x639c5b883959f9a75eb0b3141afed97ad2522602 47',
+  '0xc87c9648573e8fb51f4a0ac37ced2b31b6c89a14 46',
+  '0x155ceafe157c9b3e14844cc5914ffe2e8b2dabc9 43',
+  '0x723b38bc97e16c0540ca31ef7da9f61a13a0f55a 35',
+  '0x2afdc666ad7e02ca19b13dd32cedaf1b116a9f82 21',
+  '0xa0c4a76bfb402fc682939e6148c12ba9da64a376 19',
+  '0xbd228cb420bd7adfe6341a63f265c273d1a5a9ea 9',
+  '0xdb854089b974275911eb9d04d1a91f8e7b32da47 7',
+  '0xa72115ded7a05510acc86447bde07ff56c7d85fe 6',
+  '0xa80d108695758cf58f7fe977c2d369ca947bc71d 2',
+  '0xca09026ef62153d87ef6f2663974eb82fd54bb01 1',
+  '0x82f1e8132ab50ba6247ca018de57192e1819261b 1',
+  '0xf3573908a25e649a2ce1531c3a4147f2e79f9e50 1',
+  '0xccccaf428d2734eb3cd3bbdd901304dd9d225ae8 1',
+  '0xe793a31266402335a6995317cf52ed01d7f68c6d 1',
+  '0x66dd26c69ea19738f1d10e16706f1bca0973ef6c 1',
+  '0x8cf1bffbd3b94bd44f1cdf261f83af391114986f 1',
+  '0x104a33513e903379de3693c93e1fbce3784c7758 1',
+  '0xfeeb414d63fe02eef6d6fa68d1eaed54167f5312 1',
+  '0x73f00211c28d8be69c182ee474d6f64476fd0dc3 1',
+  '0x11df76d095c4639c6ff0310db5393498b1d6cd38 1',
+  '0xc9c628e06fd9ca3d07b23cefd61b79a5658f85ff 1',
+   */
 ]
 
-getWinners()
-  .then(({ regular, jackpot }) => {
-    console.log('Regular Lottery Winners:')
-    console.log(regular.join(', '))
-    console.log('\nJackpot Lottery Winner:')
-    console.log(jackpot)
-  })
-  .catch(error => console.error('Execution failed', error));
+// 6 random words from Chainlink VRF
+// can be taken from rounds/{N}/random-words.md file
+const RANDOM_WORDS = [
+  /*
+  Sample for Round 2:
+
+  '21495290844227382838462518920788244556349893617160570921429646484682368123728',
+  '57604428989393039047310904828006166202628244411520524224878846125142174215479',
+  '100733826705992906333237550914160427608213978499274339383930701940323040009940',
+  '62853438239679090602457905620136532853376658199187197491463993778072069322954',
+  '26299718230337497535130652480501365083590253726289837447229151699062343912171',
+  '75464086490913650431099672998609117770559053026642479753696284024806219727658',
+   */
+]
+
+getWinners(
+  JACKPOT_WIN_CHANCE,
+  PARTICIPANTS,
+  RANDOM_WORDS,
+)
