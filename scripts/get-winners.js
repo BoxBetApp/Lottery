@@ -3,11 +3,18 @@ const getTickets = require('./get-tickets')
 // Initialize an empty array to keep track of regular lottery winners
 const regularLotteryWinners = []
 
-function getJackpotLotteryWinner(JACKPOT_WIN_CHANCE, RANDOM_WORD, ticketCount) {
-  const winner = parseInt(RANDOM_WORD) % (ticketCount * 100 / JACKPOT_WIN_CHANCE) + 1
+const getBlankTicketCount = (JACKPOT_WIN_CHANCE, ticketCount) => {
+  return ticketCount * (100 - JACKPOT_WIN_CHANCE)
+}
 
-  // If the calculated winner number exceeds the ticketCount, return 'no winner' indicating no winner, otherwise return the winner number
-  return winner > ticketCount ? 'No Winner' : winner
+function getJackpotLotteryWinner(JACKPOT_WIN_CHANCE, RANDOM_WORD, ticketCount) {
+  const blankTicketCount = getBlankTicketCount(JACKPOT_WIN_CHANCE, ticketCount)
+  const totalTicketCount = ticketCount + blankTicketCount
+
+  console.log('\nJackpot Ticket Count:')
+  console.log(totalTicketCount)
+
+  return parseInt(RANDOM_WORD) % (totalTicketCount) + 1
 }
 
 function recreateRandomWord(randomWord) {
@@ -47,6 +54,9 @@ module.exports = function getWinners(
   const tickets = getTickets(PARTICIPANTS)
   const ticketCount = tickets.length
 
+  console.log('\nRegular Ticket Count:')
+  console.log(ticketCount)
+
   const regularWinners = [
     getRegularLotteryWinner(RANDOM_WORDS[0], ticketCount),
     getRegularLotteryWinner(RANDOM_WORDS[1], ticketCount),
@@ -65,8 +75,8 @@ module.exports = function getWinners(
     ticketCount
   )
 
-  console.log('Regular Lottery Winners:')
+  console.log('\nRegular Lottery Winners:')
   console.log(regularWinners.join('\n'))
   console.log('\nJackpot Lottery Winner:')
-  console.log(jackpotWinner)
+  console.log(`${jackpotWinner}, ${jackpotWinner > ticketCount ? `blank ticket (no winner)` : tickets[jackpotWinner - 1]}`)
 }
