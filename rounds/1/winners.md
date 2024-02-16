@@ -17,6 +17,8 @@ https://polygonscan.com/tx/0x9b1adbc663d5abddee87c048ea206b0468834d814727e31c16f
 
 **Regular Lottery Winners:**
 
+**600 USDT** each
+
 ```
 5, 0x375153c297b6ce68e3d786d39f8116383ad7da1a
 69, 0x375153c297b6ce68e3d786d39f8116383ad7da1a

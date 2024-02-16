@@ -1,3 +1,8 @@
+### Prizes
+
+- 5 x Regular Prizes, **600 USDT** each 
+- 1 x Jackpot Prize: **7,000 USDT**
+
 ### Jackpot Chance
 
 ```
