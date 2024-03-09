@@ -3,18 +3,17 @@ const getTickets = require('./get-tickets')
 // Initialize an empty array to keep track of regular lottery winners
 const regularLotteryWinners = []
 
-const getBlankTicketCount = (JACKPOT_WIN_CHANCE, ticketCount) => {
-  return ticketCount * (100 - JACKPOT_WIN_CHANCE)
+const getJackpotTicketCount = (JACKPOT_WIN_CHANCE, ticketCount) => {
+  return Math.floor(ticketCount * 100 / JACKPOT_WIN_CHANCE)
 }
 
 function getJackpotLotteryWinner(JACKPOT_WIN_CHANCE, RANDOM_WORD, ticketCount) {
-  const blankTicketCount = getBlankTicketCount(JACKPOT_WIN_CHANCE, ticketCount)
-  const totalTicketCount = ticketCount + blankTicketCount
+  const jackpotTicketCount = getJackpotTicketCount(JACKPOT_WIN_CHANCE, ticketCount)
 
   console.log('\nJackpot Ticket Count:')
-  console.log(totalTicketCount)
+  console.log(jackpotTicketCount)
 
-  return parseInt(RANDOM_WORD) % (totalTicketCount) + 1
+  return parseInt(RANDOM_WORD) % (jackpotTicketCount) + 1
 }
 
 function recreateRandomWord(randomWord) {

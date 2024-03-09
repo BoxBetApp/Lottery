@@ -34,5 +34,5 @@ https://polygonscan.com/tx/0xf3296ab60e4dd2b2eb862c02d8f340dbce84376a6b80b7566cc
 **Jackpot Lottery Winner:**
 
 ```
-16249, blank ticket (no winner)
+1351, blank ticket (no winner)
 ```
